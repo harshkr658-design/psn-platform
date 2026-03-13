@@ -30,7 +30,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
       .limit(10)
     
     setNotifications(data || [])
-    setUnreadCount(data?.filter(n => !n.read).length || 0)
+    setUnreadCount(data?.filter((n: any) => !n.read).length || 0)
   }
 
   async function markRead(id: string) {

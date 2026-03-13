@@ -33,7 +33,7 @@ export default function Dashboard() {
           supabase.from('mrs_scores').select('accuracy_score').eq('user_id', uid).single()
         ])
 
-        const totalUpvotes = (upvotesRes.data || []).reduce((acc, p) => acc + (p.upvotes || 0), 0)
+        const totalUpvotes = (upvotesRes.data || []).reduce((acc: number, p: any) => acc + (p.upvotes || 0), 0)
 
         setStats({
           problems: problemsRes.count || 0,

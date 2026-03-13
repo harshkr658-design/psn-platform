@@ -25,7 +25,7 @@ export default function FeedClient() {
       if (session?.user) {
         setUserId(session.user.id)
         const { data: upvotes } = await supabase.from('upvotes_log').select('problem_id').eq('user_id', session.user.id)
-        if (upvotes) setUserUpvotes(new Set(upvotes.map(u => u.problem_id)))
+        if (upvotes) setUserUpvotes(new Set(upvotes.map((u: any) => u.problem_id)))
       }
       await load()
     }
@@ -84,11 +84,11 @@ export default function FeedClient() {
 
   // Group into threads
   const parents = filtered.filter(p => !p.parent_id)
-  const childrenMap = filtered.filter(p => p.parent_id).reduce((acc, p) => {
+  const childrenMap = filtered.filter(p => p.parent_id).reduce((acc: Record<string, any[]>, p: any) => {
     if (!acc[p.parent_id]) acc[p.parent_id] = []
     acc[p.parent_id].push(p)
     return acc
-  }, {} as Record<string, any[]>)
+  }, {})
 
   const sortedParents = [...parents].sort((a, b) => {
     if (sort === 'merit') return calculateMerit(b) - calculateMerit(a)

@@ -78,7 +78,7 @@ export default function ReviewPage() {
       const { data: allReviews } = await supabase.from('reviews').select('clarity_score, feasibility_score, evidence_score, innovation_score, realism_score').eq('problem_id', id)
       
       if (allReviews) {
-        const totalAvg = allReviews.reduce((acc, r) => {
+        const totalAvg = allReviews.reduce((acc: number, r: any) => {
           const rAvg = (r.clarity_score + r.feasibility_score + r.evidence_score + r.innovation_score + r.realism_score) / 5
           return acc + rAvg
         }, 0) / allReviews.length

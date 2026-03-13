@@ -19,9 +19,9 @@ export default function Navbar() {
     }
     getUser()
     
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       if (session?.user) {
-        supabase.from('users').select('*').eq('id', session.user.id).single().then(({ data }) => setUser(data))
+        supabase.from('users').select('*').eq('id', session.user.id).single().then(({ data }: any) => setUser(data))
       } else {
         setUser(null)
       }
