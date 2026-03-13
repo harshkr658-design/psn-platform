@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
@@ -9,6 +9,11 @@ export default function Submit() {
   const [raw, setRaw] = useState('')
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({ title:'', description:'', evidence:'', proposed_solution:'', category:'Other', impact:'' })
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   async function structure() {
     setLoading(true)
@@ -17,7 +22,7 @@ export default function Submit() {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
-          model:'claude-sonnet-4-20250514', max_tokens:1000,
+          model:'claude-3-5-sonnet-20240620', max_tokens:1000,
           messages:[{role:'user',content:`Structure this into a problem post. Return ONLY valid JSON with keys: title, description, evidence, proposed_solution, category (one of: Environment Social Technology Health Education Economy Politics Personal Other), impact. Raw input: ${raw}`}]
         })
       })
@@ -32,6 +37,10 @@ export default function Submit() {
   }
 
   async function submit() {
+    if (!supabase) {
+      alert('Supabase not configured.')
+      return
+    }
     setLoading(true)
     const { data: { session } } = await supabase.auth.getSession()
     const url = raw.startsWith('http') ? raw.split(' ')[0] : null
@@ -45,6 +54,15 @@ export default function Submit() {
       await supabase.from('users').update({ grs_score: 120 }).eq('id', session.user.id)
     }
     router.push('/feed')
+  }
+
+  if (!mounted) {
+    return (
+      <main style={{minHeight:'100vh',background:'#000',color:'#fff',padding:'40px 20px',maxWidth:'700px',margin:'0 auto'}}>
+        <h1 style={{fontSize:'32px',fontWeight:'700',marginBottom:'32px'}}>Submit a Problem</h1>
+        <p style={{color:'#94a3b8'}}>Loading...</p>
+      </main>
+    )
   }
 
   return (
