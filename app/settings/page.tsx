@@ -11,17 +11,16 @@ export default function Settings() {
 
   useEffect(() => {
     async function load() {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        setEmail(session.user.email || '')
-        const { data } = await supabase.from('users').select('*').eq('id', session.user.id).single()
-        setUser(data)
-        setDisplayName(data?.display_name || '')
-      } else {
-        setEmail('guest@upraxis.network')
-        setUser({ display_name: 'Guest Operator', grs_score: 0, m_score: '0.0', tier: 'Observer', is_demo: true })
-        setDisplayName('Iron Falcon')
-      }
+      // 100% UI MVP persistent demo mode
+      setEmail('iron.falcon@upraxis.network')
+      setUser({ 
+        display_name: 'Iron Falcon', 
+        grs_score: 340, 
+        mrs_score: '4.2', 
+        tier: 'CONTRIBUTOR', 
+        is_demo: true 
+      })
+      setDisplayName('Iron Falcon')
       setLoading(false)
     }
     load()

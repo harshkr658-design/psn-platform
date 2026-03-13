@@ -21,19 +21,18 @@ export default function Dashboard() {
     async function load() {
       const { data: { session } } = await supabase.auth.getSession()
       
-      if (!session) {
-        // Load Iron Falcon Demo State
+      if (true) { // 100% UI MVP persistent demo mode
         setUser({
           display_name: 'Iron Falcon',
           grs_score: 340,
           streak: 5,
-          tier: 'Contributor',
+          tier: 'CONTRIBUTOR',
           is_demo: true
         })
         setStats({
           problems: 3,
           reviews: 8,
-          upvotes: 112,
+          upvotes: 112, // Consistent with global GRS
           evolutions: 2
         })
         setActivity([
@@ -41,38 +40,11 @@ export default function Dashboard() {
           { action_type: 'Problem submitted', points: 120, created_at: new Date(Date.now() - 86400000).toISOString() },
           { action_type: 'Endorsement received', points: 10, created_at: new Date(Date.now() - 172800000).toISOString() }
         ])
-        setMrs({ accuracy_score: 0.84, review_count: 8 })
+        setMrs({ accuracy_score: 4.2 / 5, review_count: 8 }) // Accuracy score normalized
         setLoading(false)
         return
       }
 
-      try {
-        const [
-          { data: userData },
-          { count: problemCount },
-          { count: reviewCount },
-          { data: upvoteData },
-          { data: activityData },
-          { data: mrsData }
-        ] = await Promise.all([
-          supabase.from('users').select('*').eq('id', session.user.id).single(),
-          supabase.from('problems').select('*', { count: 'exact', head: true }).eq('author_id', session.user.id),
-          supabase.from('reviews').select('*', { count: 'exact', head: true }).eq('reviewer_id', session.user.id),
-          supabase.from('problems').select('upvotes').eq('author_id', session.user.id),
-          supabase.from('grs_log').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(8),
-          supabase.from('mrs_scores').select('*').eq('user_id', session.user.id).single()
-        ])
-
-        setUser(userData)
-        const totalUpvotes = upvoteData?.reduce((sum: number, p: any) => sum + (p.upvotes || 0), 0) || 0
-        setStats({ problems: problemCount || 0, reviews: reviewCount || 0, upvotes: totalUpvotes, evolutions: 0 })
-        setActivity(activityData || [])
-        setMrs(mrsData)
-      } catch (error) {
-        console.error('Error loading dashboard data:', error)
-      } finally {
-        setLoading(false)
-      }
     }
     load()
   }, [])

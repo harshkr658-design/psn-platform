@@ -16,12 +16,8 @@ export default function ReviewPage() {
   const [showSuccess, setShowSuccess] = useState(false)
 
   const DEMO_PROBLEMS = [
-    { id: '1', title: 'Social media algorithms optimise for outrage rather than accuracy', description: 'Major platforms use engagement-based ranking that amplifies emotionally charged content over factually accurate content, eroding shared reality.', evidence: 'MIT study found false news spreads 6x faster than true news. Facebook internal research showed algorithm changes boosted anger reactions.', proposed_solution: 'Mandate algorithmic transparency. Require platforms to offer a chronological feed option.', category: 'Technology', impact: 'Affects 4.9 billion social media users globally.' },
-    { id: '2', title: 'Students memorise answers rather than developing critical thinking', description: 'Education systems globally optimise for standardised test scores, rewarding memorisation over reasoning, questioning, and creation.', evidence: 'PISA 2022 data shows students significantly underperform in open-ended reasoning vs recall tasks globally.', proposed_solution: 'Replace percentage-based grading with competency portfolios. Introduce Socratic method.', category: 'Education', impact: 'Affects 1.5 billion students currently in formal education globally.' },
-    { id: '3', title: 'Urban air pollution disproportionately affects low-income communities', description: 'Industrial facilities and highways are systematically located near low-income areas, exposing those with least political power to highest environmental health risks.', evidence: 'EPA data shows communities of colour are 1.5x more likely to live near industrial polluters.', proposed_solution: 'Mandate environmental impact assessments that include demographic analysis.', category: 'Environment', impact: 'Estimated 200 million people live within 1km of a major pollution source globally.' },
-    { id: '4', title: 'Mental health support is inaccessible to most people who need it', description: 'The global mental health system is severely under-resourced, leaving the majority without access to professional support due to cost, availability, and stigma.', evidence: 'WHO: 75% of people with mental disorders in low-income countries receive no treatment.', proposed_solution: 'Train peer support specialists at community level. Integrate into primary healthcare.', category: 'Health', impact: 'WHO estimates 1 in 8 people globally live with a mental disorder.' },
-    { id: '5', title: 'Gig economy workers have no safety net or career progression path', description: 'Platform-based gig work has created workers who lack healthcare, pension, sick pay, and career development — trapped in permanent economic precarity.', evidence: 'UK ONS: 4.4 million gig workers. Most earn below minimum wage after expenses.', proposed_solution: 'Introduce portable benefits — contributions that follow the worker.', category: 'Economy', impact: 'Estimated 435 million gig workers globally as of 2025.' },
-    { id: '6', title: 'Smartphone addiction is rewiring adolescent brain development', description: 'Excessive smartphone use during critical developmental years is correlated with increased anxiety, reduced attention span, and disrupted sleep patterns in teenagers.', evidence: 'Journal of Child Psychology 2023: teens averaging 7+ hours screen time show 40% higher anxiety markers.', proposed_solution: 'Implement device-level cognitive limits for developmental ages.', category: 'Social', impact: 'Affects 1 billion+ adolescents globally.' }
+    { id: '1', title: 'Social media algorithms optimizing for outrage and division', description: 'Current engagement metrics ignore the long-term societal cost of polarized discourse and mental health decline.', evidence: 'MIT study found false news spreads 6x faster than true news. Facebook internal research showed algorithm changes boosted anger reactions.', proposed_solution: 'Implement an "Epistemic Merit" layer that decouples visibility from engagement and integrates it with factual verification.', category: 'Technology', impact: 'Weakened democratic institutions, increased teenage depression rates, and social fragmentation.' },
+    { id: '2', title: 'Global education system focusing on rote memorization over critical thinking', description: 'Industrial-age curricula are failing to prepare the next generation for an AI-driven economy where problem solving is the primary currency.', evidence: 'PISA 2022 data shows students significantly underperform in open-ended reasoning vs recall tasks globally.', proposed_solution: 'Replace percentage-based grading with competency portfolios. Introduce Socratic method.', category: 'Education', impact: 'Widespread unemployment, lack of innovation in critical sectors, and human potential suppression.' }
   ]
 
   useEffect(() => {
@@ -72,98 +68,13 @@ export default function ReviewPage() {
   }
 
   async function submitReview() {
-    if (!userId || !problem || submitting) return
+    if (submitting) return
     setSubmitting(true)
     
-    try {
-      if (userId === 'guest' || ['1','2','3','4','5','6'].includes(id as string)) {
-        // Demo mode submission
-        setTimeout(() => {
-          setSubmitting(false)
-          setShowSuccess(true)
-        }, 1500)
-        return
-      }
-
-      const avg = Object.values(scores).reduce((a, b) => a + b, 0) / 5
-      // ... rest of the real submission logic
-      
-      // 1. Insert review
-      const { error: rError } = await supabase.from('reviews').insert({
-        problem_id: id,
-        reviewer_id: userId,
-        clarity_score: scores.clarity,
-        feasibility_score: scores.feasibility,
-        evidence_score: scores.evidence,
-        innovation_score: scores.innovation,
-        realism_score: scores.realism,
-        comment
-      })
-      if (rError) throw rError
-
-      // 2. Update problem score
-      const { data: allReviews } = await supabase.from('reviews').select('clarity_score, feasibility_score, evidence_score, innovation_score, realism_score').eq('problem_id', id)
-      
-      if (allReviews) {
-        const totalAvg = allReviews.reduce((acc: number, r: any) => {
-          const rAvg = (r.clarity_score + r.feasibility_score + r.evidence_score + r.innovation_score + r.realism_score) / 5
-          return acc + rAvg
-        }, 0) / allReviews.length
-
-        await supabase.from('problems').update({
-          avg_score: totalAvg,
-          review_count: allReviews.length
-        }).eq('id', id)
-      }
-
-      // 3. Update User GRS & Streak
-      const { data: profile } = await supabase.from('users').select('grs_score, streak, last_active').eq('id', userId).single()
-      
-      // Streak Logic
-      const today = new Date().toISOString().split('T')[0]
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
-      const lastActive = profile?.last_active
-      
-      let newStreak = 1
-      if (lastActive === yesterday) {
-        newStreak = (profile?.streak || 0) + 1
-      } else if (lastActive === today) {
-        newStreak = profile?.streak || 1
-      }
-
-      const newScore = (profile?.grs_score || 0) + 50
-      await supabase.from('users').update({ 
-        grs_score: newScore,
-        streak: newStreak,
-        last_active: today
-      }).eq('id', userId)
-      await supabase.from('grs_log').insert({ user_id: userId, action_type: 'Blind review given', points: 50 })
-
-      // 4. Update MRS Accuracy (Placeholder logic: deviation from global average)
-      // For actual MRS, we'd need more complex analysis, but we'll increment review_count at least
-      const { data: mrs } = await supabase.from('mrs_scores').select('review_count').eq('user_id', userId).single()
-      if (mrs) {
-        await supabase.from('mrs_scores').update({ review_count: (mrs.review_count || 0) + 1 }).eq('user_id', userId)
-      } else {
-        await supabase.from('mrs_scores').insert({ user_id: userId, review_count: 1 })
-      }
-
-      // 5. Notify Author
-      if (problem.author_id) {
-        await supabase.from('notifications').insert({
-          user_id: problem.author_id,
-          type: 'review',
-          message: `Someone reviewed your submission: ${problem.title}`
-        })
-      }
-
-      router.push('/feed')
-    } catch (e) {
-      console.error(e)
-      alert('Failed to submit review.')
-    } finally {
-      setSubmitting(false)
-    }
+    // Simulate merit recording
+    await new Promise(r => setTimeout(r, 1500))
+    setSubmitting(false)
+    setShowSuccess(true)
   }
 
   const liveAvg = Object.values(scores).reduce((a, b) => a + b, 0) / 5
@@ -282,13 +193,22 @@ export default function ReviewPage() {
               <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
             <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>MERIT RECORDED</h2>
-            <p className="text-slate-400 mb-8 text-sm leading-relaxed">Your review has been structured. Connect the database to save your contribution to the global record.</p>
-            <button 
-              onClick={() => router.push('/feed')}
-              className="w-full py-4 bg-[#0ea5e9] text-black rounded-xl font-bold"
-            >
-              Back to Feed
-            </button>
+            <p className="text-[#0ea5e9] text-xl font-bold mb-4" style={{ fontFamily: "'JetBrains Mono', monospace" }}>+50 GRS EARNED</p>
+            <p className="text-slate-400 mb-8 text-sm leading-relaxed">Your review has been successfully indexed in the merit network. Join the network to save your contribution permanently.</p>
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={() => router.push('/signup')}
+                className="w-full py-4 bg-[#0ea5e9] text-black rounded-xl font-bold"
+              >
+                INITIALIZE IDENTITY
+              </button>
+              <button 
+                onClick={() => router.push('/feed')}
+                className="w-full py-4 bg-transparent border border-white/10 text-white rounded-xl font-bold text-xs"
+              >
+                BACK TO FEED
+              </button>
+            </div>
           </div>
         </div>
       )}

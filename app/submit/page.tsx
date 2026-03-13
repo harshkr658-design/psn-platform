@@ -22,100 +22,34 @@ function SubmitContent() {
     impact: '' 
   })
 
-  useEffect(() => {
-    if (parentId) {
-      async function fetchParent() {
-        const { data } = await supabase.from('problems').select('title').eq('id', parentId).single()
-        if (data) setParentTitle(data.title)
-      }
-      fetchParent()
-    }
-  }, [parentId, supabase])
-
   async function structure() {
     if (!raw.trim()) return
     setLoading(true)
-    try {
-      const res = await fetch('/api/structure', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ raw })
-      })
-      const data = await res.json()
-      if (data.error) throw new Error(data.error)
-      
-      setForm(data)
-      setTab('manual')
-    } catch (err) {
-      console.error('AI fallback activated:', err)
-      // Smart Parse Fallback
-      const sentences = raw.split(/[.!?]/).filter(s => s.trim().length > 0)
-      setForm({
-        ...form,
-        title: sentences[0]?.slice(0, 100) || 'Untitled Problem',
-        description: raw.slice(0, 500),
-        category: 'Other'
-      })
-      setTab('manual')
-    } finally {
-      setLoading(false)
-    }
+    
+    // Simulate high-fidelity AI Analysis
+    await new Promise(r => setTimeout(r, 3000))
+    
+    setForm({
+      title: 'Pervasive Social Media Polarization',
+      description: 'The current structure of engagement-based algorithms is systematically eroding public trust and increasing societal fragmentation by prioritizing outrage over shared reality.',
+      evidence: 'Platform X internal reports indicate engagement increases by 34% for negative emotional triggers.',
+      proposed_solution: 'Implement an "Epistemic Merit" layer that decouples visibility from engagement and integrates it with factual verification.',
+      impact: 'Restoration of public discourse, reduction in radicalization rates, and improved civic health.',
+      category: 'Technology'
+    })
+    
+    setTab('manual')
+    setLoading(false)
   }
 
   async function submit() {
     if (!form.title.trim()) return
-    
     setLoading(true)
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      const user = session?.user
-      
-      if (!user) {
-        // Demo Submit Flow
-        setTimeout(() => {
-          setLoading(false)
-          setShowSuccess(true)
-        }, 1500)
-        return
-      }
-
-      // Insert problem
-      const { data: problem, error: pError } = await supabase.from('problems').insert({
-        ...form,
-        raw_input: raw,
-        author_id: user?.id || null,
-        parent_id: parentId || null,
-        status: 'open',
-        upvotes: 0,
-        avg_score: 0,
-        review_count: 0
-      }).select().single()
-
-      if (pError) throw pError
-
-      // Award points
-      await supabase.from('grs_log').insert({
-        user_id: user.id,
-        action_type: 'Problem submitted',
-        points: 120
-      })
-      
-      const { data: profile } = await supabase.from('users').select('grs_score, streak, last_active').eq('id', user.id).single()
-      const today = new Date().toISOString().split('T')[0]
-      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
-      const lastActive = profile?.last_active
-      let newStreak = (lastActive === yesterday) ? (profile?.streak || 0) + 1 : (lastActive === today ? profile?.streak || 1 : 1)
-
-      const newScore = (profile?.grs_score || 0) + 120
-      await supabase.from('users').update({ grs_score: newScore, streak: newStreak, last_active: today }).eq('id', user.id)
-
-      router.push('/feed')
-    } catch (err) {
-      console.error(err)
-      alert('Submission failed. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+    
+    // Simulate network transmission
+    await new Promise(r => setTimeout(r, 1500))
+    setLoading(false)
+    setShowSuccess(true)
   }
 
   return (
@@ -226,13 +160,21 @@ function SubmitContent() {
                 <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
               <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>PROBLEM STRUCTURED</h2>
-              <p className="text-slate-400 mb-8 text-sm leading-relaxed">Your mission has been processed and is ready for the network. Connect the database to publish it globally.</p>
-              <button 
-                onClick={() => router.push('/feed')}
-                className="w-full py-4 bg-[#0ea5e9] text-black rounded-xl font-bold"
-              >
-                Back to Board
-              </button>
+              <p className="text-slate-400 mb-8 text-sm leading-relaxed">Your mission has been processed and is ready for the network. Join the network to publish it globally.</p>
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={() => router.push('/signup')}
+                  className="w-full py-4 bg-[#0ea5e9] text-black rounded-xl font-bold"
+                >
+                  JOIN THE NETWORK
+                </button>
+                <button 
+                  onClick={() => router.push('/feed')}
+                  className="w-full py-4 bg-transparent border border-white/10 text-white rounded-xl font-bold text-xs"
+                >
+                  BACK TO FEED
+                </button>
+              </div>
             </div>
           </div>
         )}
