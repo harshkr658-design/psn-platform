@@ -111,8 +111,8 @@ function SubmitContent() {
           </div>
         )}
 
-        <h1 className="text-4xl font-bold mb-2 tracking-tight">Submit a Problem</h1>
-        <p className="text-slate-400 mb-10">Any problem, any size. AI will help you structure it for the network.</p>
+        <h1 className="text-4xl font-bold mb-2 tracking-tight" style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '48px', letterSpacing: '0.05em' }}>SUBMIT A PROBLEM</h1>
+        <p className="text-slate-400 mb-10" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px', letterSpacing: '0.05em', color: '#64748b' }}>// INITIALIZE NEW PROBLEM DATA NODE</p>
 
         <div className="flex p-1 bg-white/5 rounded-xl mb-8 w-fit">
           {(['paste', 'manual'] as const).map((t) => (
@@ -167,7 +167,7 @@ function SubmitContent() {
                 { key: 'impact', label: 'Expected Impact', placeholder: 'Who is affected and how', rows: 2 },
               ].map((f) => (
                 <div key={f.key}>
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block">{f.label}</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 block" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px' }}>{f.label}</label>
                   <textarea
                     value={(form as any)[f.key]}
                     onChange={(e) => setForm((fm) => ({ ...fm, [f.key]: e.target.value }))}

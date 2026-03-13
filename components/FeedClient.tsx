@@ -138,8 +138,8 @@ export default function FeedClient() {
             <span className="text-[9px] text-slate-500 uppercase tracking-tighter">Reviews</span>
           </div>
           <div className="flex flex-col">
-            <span className="text-[#0ea5e9] font-bold">{p.avg_score ? p.avg_score.toFixed(1) : '—'}</span>
-            <span className="text-[9px] text-slate-500 uppercase tracking-tighter">Merit Score</span>
+            <span className="text-[#0ea5e9] font-bold" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{p.avg_score ? p.avg_score.toFixed(1) : '—'}</span>
+            <span className="text-[9px] text-slate-500 uppercase tracking-tighter" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Merit Score</span>
           </div>
         </div>
 
@@ -162,8 +162,8 @@ export default function FeedClient() {
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
-            <h1 className="text-5xl font-black tracking-tighter mb-2 italic">MISSION BOARD</h1>
-            <p className="text-slate-500 text-sm">Ranked by collective merit and mathematical recency.</p>
+            <h1 className="text-5xl font-black tracking-tighter mb-2 italic" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>MISSION BOARD</h1>
+            <p className="text-slate-500 text-sm" style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '10px', letterSpacing: '0.05em' }}>RANKED BY COLLECTIVE MERIT AND MATHEMATICAL RECENCY</p>
           </div>
           
           <div className="flex gap-2">

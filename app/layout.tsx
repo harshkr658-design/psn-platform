@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'PSN — Problem Solving Network',
-  description: 'A decentralised meritocracy for the evolution of collective intelligence.',
+  description: 'A decentralized meritocracy for the evolution of collective intelligence.',
 }
 
 export default function RootLayout({
@@ -17,7 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-black text-white antialiased selection:bg-[#0ea5e9]/30`}>
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+      </head>
+      <body className={`${inter.className} bg-black text-white antialiased selection:bg-[#0ea5e9]/30`} style={{margin:0,padding:0,background:'#000',fontFamily:"'DM Sans',sans-serif"}}>
         <Navbar />
         <div className="pb-16 md:pb-0">
           {children}
