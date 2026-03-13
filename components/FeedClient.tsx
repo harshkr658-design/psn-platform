@@ -10,6 +10,87 @@ const categoryColors: Record<string, string> = {
   Politics: '#f97316', Personal: '#94a3b8', Other: '#64748b'
 }
 
+const DEMO_PROBLEMS = [
+  {
+    id: '1',
+    title: 'Social media algorithms optimise for outrage rather than accuracy',
+    description: 'Major platforms use engagement-based ranking that amplifies emotionally charged content over factually accurate content, eroding shared reality.',
+    evidence: 'MIT study found false news spreads 6x faster than true news. Facebook internal research showed algorithm changes boosted anger reactions.',
+    category: 'Technology',
+    upvotes: 47,
+    avg_score: 4.3,
+    review_count: 12,
+    created_at: new Date(Date.now() - 3600000 * 2).toISOString(),
+    source_url: null,
+    parent_id: null
+  },
+  {
+    id: '2',
+    title: 'Students memorise answers rather than developing critical thinking',
+    description: 'Education systems globally optimise for standardised test scores, rewarding memorisation over reasoning, questioning, and creation.',
+    evidence: 'PISA 2022 data shows students significantly underperform in open-ended reasoning vs recall tasks globally.',
+    category: 'Education',
+    upvotes: 38,
+    avg_score: 4.1,
+    review_count: 9,
+    created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+    source_url: null,
+    parent_id: null
+  },
+  {
+    id: '3',
+    title: 'Urban air pollution disproportionately affects low-income communities',
+    description: 'Industrial facilities and highways are systematically located near low-income areas, exposing those with least political power to highest environmental health risks.',
+    evidence: 'EPA data shows communities of colour are 1.5x more likely to live near industrial polluters. WHO: 7 million premature deaths annually from air pollution.',
+    category: 'Environment',
+    upvotes: 29,
+    avg_score: 4.6,
+    review_count: 7,
+    created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
+    source_url: null,
+    parent_id: null
+  },
+  {
+    id: '4',
+    title: 'Mental health support is inaccessible to most people who need it',
+    description: 'The global mental health system is severely under-resourced, leaving the majority without access to professional support due to cost, availability, and stigma.',
+    evidence: 'WHO: 75% of people with mental disorders in low-income countries receive no treatment. US therapy costs $150-300 per session without insurance.',
+    category: 'Health',
+    upvotes: 61,
+    avg_score: 4.7,
+    review_count: 18,
+    created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
+    source_url: null,
+    parent_id: null
+  },
+  {
+    id: '5',
+    title: 'Gig economy workers have no safety net or career progression path',
+    description: 'Platform-based gig work has created workers who lack healthcare, pension, sick pay, and career development — trapped in permanent economic precarity.',
+    evidence: 'UK ONS: 4.4 million gig workers. Most earn below minimum wage after expenses. Zero access to employer pension contributions.',
+    category: 'Economy',
+    upvotes: 22,
+    avg_score: 3.9,
+    review_count: 6,
+    created_at: new Date(Date.now() - 3600000 * 36).toISOString(),
+    source_url: null,
+    parent_id: null
+  },
+  {
+    id: '6',
+    title: 'Smartphone addiction is rewiring adolescent brain development',
+    description: 'Excessive smartphone use during critical developmental years is correlated with increased anxiety, reduced attention span, and disrupted sleep patterns in teenagers.',
+    evidence: 'Journal of Child Psychology 2023: teens averaging 7+ hours screen time show 40% higher anxiety markers. Sleep disruption affects 70% of adolescents.',
+    category: 'Social',
+    upvotes: 55,
+    avg_score: 4.2,
+    review_count: 14,
+    created_at: new Date(Date.now() - 3600000 * 8).toISOString(),
+    source_url: null,
+    parent_id: null
+  }
+]
+
 export default function FeedClient() {
   const [problems, setProblems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -35,12 +116,17 @@ export default function FeedClient() {
   async function load() {
     setLoading(true)
     try {
-      const { data } = await supabase.from('problems').select('*')
-      setProblems(data || [])
+      const { data, error } = await supabase.from('problems').select('*')
+      if (error || !data || data.length === 0) {
+        setProblems(DEMO_PROBLEMS)
+      } else {
+        setProblems(data)
+      }
     } catch (e) {
-      console.error(e)
+      console.error('Supabase fetch failed, using demo data:', e)
+      setProblems(DEMO_PROBLEMS)
     } finally {
-      setLoading(false)
+      setTimeout(() => setLoading(false), 800) // Ensure smooth transition
     }
   }
 

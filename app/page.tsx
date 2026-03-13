@@ -190,6 +190,10 @@ export default function Home() {
           <a href="/signup" style={{display:'inline-flex',alignItems:'center',gap:'12px',background:'#0ea5e9',color:'#000',padding:'20px 48px',borderRadius:'4px',fontWeight:'700',textDecoration:'none',fontSize:'14px',letterSpacing:'0.08em',fontFamily:"'JetBrains Mono',monospace",boxShadow:'0 0 60px rgba(14,165,233,0.4)'}}>
             INITIALIZE YOUR NODE →
           </a>
+
+          <div style={{marginTop:'120px',borderTop:'1px solid #0f172a',paddingTop:'48px',fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#334155',letterSpacing:'0.2em'}}>
+            UPRAXIS // 2026 // DECENTRALISED MERITOCRACY
+          </div>
         </section>
 
       </div>

@@ -1,104 +1,80 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 
-export default function SignupPage() {
+export default function Signup() {
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [codename, setCodename] = useState('Iron Falcon')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-    
-    try {
-      const { error } = await supabase.auth.signUp({ email, password })
-      if (error) throw error
-      setSuccess(true)
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 2000)
-    } catch (err: any) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const codenames = ['Iron Falcon', 'Dark Meridian', 'Swift Cipher', 'Blue Vertex', 'Silver Nexus', 'Silent Orbit']
+  
+  useEffect(() => {
+    let i = 0
+    const interval = setInterval(() => {
+      setCodename(codenames[i % codenames.length])
+      i++
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
-    <main className="min-h-screen bg-black text-white flex items-center justify-center p-6 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-[#0ea5e9]/5 via-transparent to-transparent">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-black italic tracking-tighter mb-2">NETWORK INITIALIZATION</h1>
-          <p className="text-slate-500 text-sm">Join the decentralised meritocracy.</p>
+    <main style={{ minHeight: '100vh', background: '#000', color: '#fff', fontFamily: "'DM Sans', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'radial-gradient(circle at 50% 50%, rgba(14,165,233,0.05) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      
+      <div style={{ maxWidth: '400px', width: '100%', position: 'relative', zIndex: 1 }}>
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <Link href="/" style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '42px', letterSpacing: '0.15em', color: '#fff', textDecoration: 'none' }}>
+            UPRAXIS<span style={{ color: '#0ea5e9' }}>.</span>
+          </Link>
+          <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '10px', color: '#64748b', letterSpacing: '0.3em', marginTop: '12px' }}>INITIALIZE PRESENCE</div>
         </div>
 
-        <form onSubmit={handleSignup} className="bg-[#0f172a] border border-white/5 rounded-3xl p-8 shadow-2xl space-y-6">
-          {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-[10px] font-bold text-center">
-              {error.toUpperCase()}
-            </div>
-          )}
-
-          {success && (
-            <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl text-green-500 text-[10px] font-bold text-center">
-              ACCOUNT INITIALIZED. REDIRECTING...
-            </div>
-          )}
-
-          <div className="space-y-4 mb-6 p-4 bg-white/5 rounded-2xl border border-white/5">
-            <h3 className="text-[10px] font-bold text-[#0ea5e9] uppercase tracking-widest flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#0ea5e9] animate-pulse" />
-              Privacy Protocol 1.0
-            </h3>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              Upon registration, a random **Codename** (e.g., "Silver Falcon") will be assigned to your vector. This identity will be used for all blind reviews to protect the meritocracy from bias.
-            </p>
+        <div style={{ background: '#050a14', border: '1px solid #0f172a', padding: '40px', borderRadius: '4px' }}>
+          
+          <div style={{ marginBottom: '32px', textAlign: 'center', background: 'rgba(14,165,233,0.05)', padding: '20px', borderRadius: '4px', border: '1px dashed #0ea5e940' }}>
+            <div style={{ fontFamily: "'JetBrains Mono',monospace", fontSize: '9px', color: '#0ea5e9', marginBottom: '8px' }}>ASSIGNED CODENAME (PREVIEW)</div>
+            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: '24px', color: '#fff', letterSpacing: '0.1em' }} className="animate-pulse">{codename.toUpperCase()}</div>
+            <p style={{ fontSize: '10px', color: '#64748b', marginTop: '12px' }}>Your reviews always appear anonymous.</p>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Vector Identity (Email)</label>
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', fontFamily: "'JetBrains Mono',monospace", fontSize: '10px', color: '#334155', marginBottom: '8px', letterSpacing: '0.1em' }}>IDENTITY / EMAIL</label>
             <input 
               type="email" 
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-black/50 border border-white/5 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#0ea5e9]/50 transition-all placeholder:text-slate-800"
-              placeholder="operator@psn.net"
+              value={email} 
+              onChange={e => setEmail(e.target.value)}
+              placeholder="you@presence.net"
+              style={{ width: '100%', background: '#000', border: '1px solid #1e293b', padding: '12px 16px', color: '#fff', fontSize: '14px', borderRadius: '4px', outline: 'none' }}
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest pl-1">Security Key (Password)</label>
+          <div style={{ marginBottom: '32px' }}>
+            <label style={{ display: 'block', fontFamily: "'JetBrains Mono',monospace", fontSize: '10px', color: '#334155', marginBottom: '8px', letterSpacing: '0.1em' }}>SECURE ACCESS KEY</label>
             <input 
               type="password" 
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-black/50 border border-white/5 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-[#0ea5e9]/50 transition-all placeholder:text-slate-800"
+              value={password} 
+              onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
+              style={{ width: '100%', background: '#000', border: '1px solid #1e293b', padding: '12px 16px', color: '#fff', fontSize: '14px', borderRadius: '4px', outline: 'none' }}
             />
           </div>
 
           <button 
-            type="submit" 
-            disabled={loading || success}
-            className="w-full py-4 bg-[#0ea5e9] text-black rounded-xl font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+            onClick={() => { setLoading(true); setTimeout(() => router.push('/dashboard'), 1500); }}
+            style={{ width: '100%', background: '#0ea5e9', color: '#000', padding: '14px', borderRadius: '4px', fontWeight: 700, border: 'none', cursor: 'pointer', fontFamily: "'JetBrains Mono',monospace", fontSize: '12px', letterSpacing: '0.1em' }}
           >
-            {loading ? 'Processing...' : 'Register Vector'}
+            {loading ? 'INDEXING IDENTITY...' : 'CREATE PRESENCE'}
           </button>
 
-          <div className="pt-4 text-center">
-            <p className="text-xs text-slate-600">
-              Already initialized? <a href="/login" className="text-[#0ea5e9] font-bold hover:underline">Access Node</a>
-            </p>
+          <div style={{ marginTop: '32px', textAlign: 'center', borderTop: '1px solid #0f172a', paddingTop: '32px' }}>
+            <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>Already indexed?</p>
+            <Link href="/login" style={{ color: '#0ea5e9', fontSize: '12px', fontWeight: 600, textDecoration: 'none' }}>Uplink Existing Node</Link>
           </div>
-        </form>
+        </div>
       </div>
     </main>
   )

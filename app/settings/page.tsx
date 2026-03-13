@@ -17,6 +17,10 @@ export default function Settings() {
         const { data } = await supabase.from('users').select('*').eq('id', session.user.id).single()
         setUser(data)
         setDisplayName(data?.display_name || '')
+      } else {
+        setEmail('guest@upraxis.network')
+        setUser({ display_name: 'Guest Operator', grs_score: 0, m_score: '0.0', tier: 'Observer', is_demo: true })
+        setDisplayName('Iron Falcon')
       }
       setLoading(false)
     }
@@ -43,6 +47,12 @@ export default function Settings() {
   return (
     <div style={{minHeight:'100vh',background:'#000',color:'#fff',fontFamily:"'DM Sans',sans-serif",padding:'100px 5vw 48px'}}>
       <div style={{maxWidth:'600px',margin:'0 auto'}}>
+        {user?.is_demo && (
+          <div style={{background:'rgba(14,165,233,0.1)',border:'1px solid #0ea5e9',borderRadius:'8px',padding:'12px 24px',marginBottom:'40px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:'11px',color:'#0ea5e9',fontWeight:600}}>DEMO MODE</span>
+            <a href="/login" style={{textDecoration:'none',color:'#0ea5e9',fontSize:'10px',fontWeight:700,fontFamily:"'JetBrains Mono',monospace"}}>SIGN IN →</a>
+          </div>
+        )}
         <div style={{marginBottom:'48px'}}>
             <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#0ea5e9',letterSpacing:'0.2em',marginBottom:'12px'}}>// NODE CONFIGURATION</div>
             <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'64px',letterSpacing:'0.05em',margin:0}}>SETTINGS</h1>

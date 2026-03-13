@@ -20,7 +20,31 @@ export default function Dashboard() {
   useEffect(() => {
     async function load() {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) { router.push('/login'); return }
+      
+      if (!session) {
+        // Load Iron Falcon Demo State
+        setUser({
+          display_name: 'Iron Falcon',
+          grs_score: 340,
+          streak: 5,
+          tier: 'Contributor',
+          is_demo: true
+        })
+        setStats({
+          problems: 3,
+          reviews: 8,
+          upvotes: 112,
+          evolutions: 2
+        })
+        setActivity([
+          { action_type: 'Blind review given', points: 50, created_at: new Date(Date.now() - 3600000).toISOString() },
+          { action_type: 'Problem submitted', points: 120, created_at: new Date(Date.now() - 86400000).toISOString() },
+          { action_type: 'Endorsement received', points: 10, created_at: new Date(Date.now() - 172800000).toISOString() }
+        ])
+        setMrs({ accuracy_score: 0.84, review_count: 8 })
+        setLoading(false)
+        return
+      }
 
       try {
         const [
@@ -71,6 +95,13 @@ export default function Dashboard() {
   return (
     <div style={{minHeight:'100vh',background:'#000',color:'#fff',fontFamily:"'DM Sans',sans-serif",padding:'100px 5vw 48px'}}>
       
+      {user?.is_demo && (
+        <div style={{background:'rgba(14,165,233,0.1)',border:'1px solid #0ea5e9',borderRadius:'8px',padding:'12px 24px',marginBottom:'40px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+          <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:'12px',color:'#0ea5e9',fontWeight:600}}>DEMO MODE ACTIVE // SIGN UP TO SAVE PROGRESS</span>
+          <a href="/signup" style={{background:'#0ea5e9',color:'#000',padding:'6px 16px',borderRadius:'4px',fontSize:'10px',fontWeight:700,textDecoration:'none',fontFamily:"'JetBrains Mono',monospace"}}>INITIALIZE NODE</a>
+        </div>
+      )}
+
       {/* Top status bar */}
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'48px',flexWrap:'wrap',gap:'16px'}}>
         <div>

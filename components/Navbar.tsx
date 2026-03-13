@@ -49,12 +49,18 @@ export default function Navbar() {
           fetchNotifications(session.user.id)
         })
       } else {
-        setUser(null)
+        // Mock demo user for Navbar
+        setUser({ display_name: 'Iron Falcon', grs_score: 340, is_demo: true })
         setNotifications([])
         setUnreadCount(0)
       }
     })
     
+    // Initial demo state if no session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) setUser({ display_name: 'Iron Falcon', grs_score: 340, is_demo: true })
+    })
+
     return () => subscription.unsubscribe()
   }, [])
 

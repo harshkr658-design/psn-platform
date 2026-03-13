@@ -10,6 +10,7 @@ function SubmitContent() {
   
   const [tab, setTab] = useState<'paste' | 'manual'>('paste')
   const [raw, setRaw] = useState('')
+  const [showSuccess, setShowSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
   const [parentTitle, setParentTitle] = useState<string | null>(null)
   const [form, setForm] = useState({ 
@@ -29,7 +30,7 @@ function SubmitContent() {
       }
       fetchParent()
     }
-  }, [parentId])
+  }, [parentId, supabase])
 
   async function structure() {
     if (!raw.trim()) return
@@ -46,17 +47,22 @@ function SubmitContent() {
       setForm(data)
       setTab('manual')
     } catch (err) {
-      console.error(err)
-      setForm(f => ({ ...f, description: raw.slice(0, 500) }))
+      console.error('AI fallback activated:', err)
+      // Smart Parse Fallback
+      const sentences = raw.split(/[.!?]/).filter(s => s.trim().length > 0)
+      setForm({
+        ...form,
+        title: sentences[0]?.slice(0, 100) || 'Untitled Problem',
+        description: raw.slice(0, 500),
+        category: 'Other'
+      })
       setTab('manual')
-      alert('AI unavailable — please fill manually')
     } finally {
       setLoading(false)
     }
   }
 
   async function submit() {
-    if (!supabase) return
     if (!form.title.trim()) return
     
     setLoading(true)
@@ -64,6 +70,15 @@ function SubmitContent() {
       const { data: { session } } = await supabase.auth.getSession()
       const user = session?.user
       
+      if (!user) {
+        // Demo Submit Flow
+        setTimeout(() => {
+          setLoading(false)
+          setShowSuccess(true)
+        }, 1500)
+        return
+      }
+
       // Insert problem
       const { data: problem, error: pError } = await supabase.from('problems').insert({
         ...form,
@@ -78,36 +93,21 @@ function SubmitContent() {
 
       if (pError) throw pError
 
-      // If logged in, award points
-      if (user) {
-        await supabase.from('grs_log').insert({
-          user_id: user.id,
-          action_type: 'Problem submitted',
-          points: 120
-        })
-        
-        // Fetch current profile for streak logic
-        const { data: profile } = await supabase.from('users').select('grs_score, streak, last_active').eq('id', user.id).single()
-        
-        // Streak Logic
-        const today = new Date().toISOString().split('T')[0]
-        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
-        const lastActive = profile?.last_active
-        
-        let newStreak = 1
-        if (lastActive === yesterday) {
-          newStreak = (profile?.streak || 0) + 1
-        } else if (lastActive === today) {
-          newStreak = profile?.streak || 1
-        }
+      // Award points
+      await supabase.from('grs_log').insert({
+        user_id: user.id,
+        action_type: 'Problem submitted',
+        points: 120
+      })
+      
+      const { data: profile } = await supabase.from('users').select('grs_score, streak, last_active').eq('id', user.id).single()
+      const today = new Date().toISOString().split('T')[0]
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+      const lastActive = profile?.last_active
+      let newStreak = (lastActive === yesterday) ? (profile?.streak || 0) + 1 : (lastActive === today ? profile?.streak || 1 : 1)
 
-        const newScore = (profile?.grs_score || 0) + 120
-        await supabase.from('users').update({ 
-          grs_score: newScore,
-          streak: newStreak,
-          last_active: today
-        }).eq('id', user.id)
-      }
+      const newScore = (profile?.grs_score || 0) + 120
+      await supabase.from('users').update({ grs_score: newScore, streak: newStreak, last_active: today }).eq('id', user.id)
 
       router.push('/feed')
     } catch (err) {
@@ -216,6 +216,24 @@ function SubmitContent() {
             >
               {loading ? 'Submitting...' : 'Submit to Network →'}
             </button>
+          </div>
+        )}
+
+        {showSuccess && (
+          <div className="fixed inset-0 z-[2000] bg-black/90 backdrop-blur-xl flex items-center justify-center p-6 animate-in fade-in duration-500">
+            <div className="max-w-md w-full bg-[#050a14] border border-[#0ea5e9]/30 rounded-3xl p-12 text-center shadow-[0_0_100px_rgba(14,165,233,0.2)]">
+              <div className="w-20 h-20 bg-[#0ea5e9]/10 rounded-full flex items-center justify-center text-[#0ea5e9] mx-auto mb-8 border border-[#0ea5e9]/20">
+                <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+              <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>PROBLEM STRUCTURED</h2>
+              <p className="text-slate-400 mb-8 text-sm leading-relaxed">Your mission has been processed and is ready for the network. Connect the database to publish it globally.</p>
+              <button 
+                onClick={() => router.push('/feed')}
+                className="w-full py-4 bg-[#0ea5e9] text-black rounded-xl font-bold"
+              >
+                Back to Board
+              </button>
+            </div>
           </div>
         )}
       </div>

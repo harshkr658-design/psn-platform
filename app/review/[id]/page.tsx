@@ -13,16 +13,33 @@ export default function ReviewPage() {
   const [scores, setScores] = useState({ clarity: 3, feasibility: 3, evidence: 3, innovation: 3, realism: 3 })
   const [comment, setComment] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [showSuccess, setShowSuccess] = useState(false)
+
+  const DEMO_PROBLEMS = [
+    { id: '1', title: 'Social media algorithms optimise for outrage rather than accuracy', description: 'Major platforms use engagement-based ranking that amplifies emotionally charged content over factually accurate content, eroding shared reality.', evidence: 'MIT study found false news spreads 6x faster than true news. Facebook internal research showed algorithm changes boosted anger reactions.', proposed_solution: 'Mandate algorithmic transparency. Require platforms to offer a chronological feed option.', category: 'Technology', impact: 'Affects 4.9 billion social media users globally.' },
+    { id: '2', title: 'Students memorise answers rather than developing critical thinking', description: 'Education systems globally optimise for standardised test scores, rewarding memorisation over reasoning, questioning, and creation.', evidence: 'PISA 2022 data shows students significantly underperform in open-ended reasoning vs recall tasks globally.', proposed_solution: 'Replace percentage-based grading with competency portfolios. Introduce Socratic method.', category: 'Education', impact: 'Affects 1.5 billion students currently in formal education globally.' },
+    { id: '3', title: 'Urban air pollution disproportionately affects low-income communities', description: 'Industrial facilities and highways are systematically located near low-income areas, exposing those with least political power to highest environmental health risks.', evidence: 'EPA data shows communities of colour are 1.5x more likely to live near industrial polluters.', proposed_solution: 'Mandate environmental impact assessments that include demographic analysis.', category: 'Environment', impact: 'Estimated 200 million people live within 1km of a major pollution source globally.' },
+    { id: '4', title: 'Mental health support is inaccessible to most people who need it', description: 'The global mental health system is severely under-resourced, leaving the majority without access to professional support due to cost, availability, and stigma.', evidence: 'WHO: 75% of people with mental disorders in low-income countries receive no treatment.', proposed_solution: 'Train peer support specialists at community level. Integrate into primary healthcare.', category: 'Health', impact: 'WHO estimates 1 in 8 people globally live with a mental disorder.' },
+    { id: '5', title: 'Gig economy workers have no safety net or career progression path', description: 'Platform-based gig work has created workers who lack healthcare, pension, sick pay, and career development — trapped in permanent economic precarity.', evidence: 'UK ONS: 4.4 million gig workers. Most earn below minimum wage after expenses.', proposed_solution: 'Introduce portable benefits — contributions that follow the worker.', category: 'Economy', impact: 'Estimated 435 million gig workers globally as of 2025.' },
+    { id: '6', title: 'Smartphone addiction is rewiring adolescent brain development', description: 'Excessive smartphone use during critical developmental years is correlated with increased anxiety, reduced attention span, and disrupted sleep patterns in teenagers.', evidence: 'Journal of Child Psychology 2023: teens averaging 7+ hours screen time show 40% higher anxiety markers.', proposed_solution: 'Implement device-level cognitive limits for developmental ages.', category: 'Social', impact: 'Affects 1 billion+ adolescents globally.' }
+  ]
 
   useEffect(() => {
     async function init() {
       const { data: { session } } = await supabase.auth.getSession()
-      if (!session) {
-        router.push('/login')
-        return
+      setUserId(session?.user?.id || 'guest')
+      
+      const isDemoId = ['1','2','3','4','5','6'].includes(id as string)
+      if (isDemoId) {
+        setProblem(DEMO_PROBLEMS.find(p => p.id === id))
+        setLoading(false)
+      } else {
+        if (!session) {
+          router.push('/login')
+          return
+        }
+        await fetchProblem(session.user.id)
       }
-      setUserId(session.user.id)
-      await fetchProblem(session.user.id)
     }
     init()
   }, [id])
@@ -59,7 +76,17 @@ export default function ReviewPage() {
     setSubmitting(true)
     
     try {
+      if (userId === 'guest' || ['1','2','3','4','5','6'].includes(id as string)) {
+        // Demo mode submission
+        setTimeout(() => {
+          setSubmitting(false)
+          setShowSuccess(true)
+        }, 1500)
+        return
+      }
+
       const avg = Object.values(scores).reduce((a, b) => a + b, 0) / 5
+      // ... rest of the real submission logic
       
       // 1. Insert review
       const { error: rError } = await supabase.from('reviews').insert({
@@ -247,6 +274,24 @@ export default function ReviewPage() {
           </button>
         </div>
       </div>
+
+      {showSuccess && (
+        <div className="fixed inset-0 z-[2000] bg-black/90 backdrop-blur-xl flex items-center justify-center p-6 animate-in fade-in duration-500">
+          <div className="max-w-md w-full bg-[#050a14] border border-[#0ea5e9]/30 rounded-3xl p-12 text-center shadow-[0_0_100px_rgba(14,165,233,0.2)]">
+            <div className="w-20 h-20 bg-[#0ea5e9]/10 rounded-full flex items-center justify-center text-[#0ea5e9] mx-auto mb-8 border border-[#0ea5e9]/20">
+              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+            <h2 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>MERIT RECORDED</h2>
+            <p className="text-slate-400 mb-8 text-sm leading-relaxed">Your review has been structured. Connect the database to save your contribution to the global record.</p>
+            <button 
+              onClick={() => router.push('/feed')}
+              className="w-full py-4 bg-[#0ea5e9] text-black rounded-xl font-bold"
+            >
+              Back to Feed
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   )
 }
