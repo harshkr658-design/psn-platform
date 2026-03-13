@@ -6,7 +6,7 @@ import Navbar from '@/components/Navbar'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'PSN — Problem Solving Network',
+  title: 'UPRAXIS — Where Thinking Becomes Doing',
   description: 'A decentralized meritocracy for the evolution of collective intelligence.',
 }
 

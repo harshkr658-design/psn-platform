@@ -91,7 +91,7 @@ export default function Home() {
           {/* System status line */}
           <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'48px',fontFamily:"'JetBrains Mono',monospace",fontSize:'11px',color:'#0ea5e9',letterSpacing:'0.15em'}}>
             <div style={{width:'6px',height:'6px',borderRadius:'50%',background:'#0ea5e9',boxShadow:'0 0 8px #0ea5e9',animation:'pulse 2s infinite'}} />
-            PSN_NETWORK // ONLINE // V2.0 // {count.toLocaleString()} PROBLEMS INDEXED
+            UPRAXIS_NETWORK // ONLINE // V2.0 // {count.toLocaleString()} PROBLEMS INDEXED
           </div>
 
           {/* Main headline */}

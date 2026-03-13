@@ -94,9 +94,23 @@ export default function Dashboard() {
         <div style={{background:`${tier.color}15`,border:`1px solid ${tier.color}40`,borderRadius:'4px',padding:'10px 20px',fontFamily:"'JetBrains Mono',monospace",fontSize:'12px',color:tier.color,letterSpacing:'0.15em'}}>
           ◈ {tier.label}
         </div>
-        <div style={{background:'rgba(251,146,60,0.1)',border:'1px solid rgba(251,146,60,0.3)',borderRadius:'4px',padding:'10px 20px',fontFamily:"'JetBrains Mono',monospace",fontSize:'12px',color:'#fb923c',letterSpacing:'0.15em'}}>
+        <div style={{
+          background: (user?.streak || 0) >= 7 ? 'rgba(245,158,11,0.1)' : 'rgba(251,146,60,0.1)',
+          border: `1px solid ${(user?.streak || 0) >= 7 ? 'rgba(245,158,11,0.3)' : 'rgba(251,146,60,0.3)'}`,
+          borderRadius:'4px',
+          padding:'10px 20px',
+          fontFamily:"'JetBrains Mono',monospace",
+          fontSize:'12px',
+          color: (user?.streak || 0) >= 7 ? '#f59e0b' : '#fb923c',
+          letterSpacing:'0.15em'
+        }}>
           🔥 {user?.streak || 0} DAY STREAK
         </div>
+        {(user?.streak || 0) >= 30 && (
+          <div style={{background:'rgba(239,68,68,0.1)',border:'1px solid rgba(239,68,68,0.3)',borderRadius:'4px',padding:'10px 20px',fontFamily:"'JetBrains Mono',monospace",fontSize:'12px',color:'#ef4444',letterSpacing:'0.15em'}}>
+            ☄️ ON FIRE
+          </div>
+        )}
         <div style={{background:'rgba(14,165,233,0.05)',border:'1px solid #1e293b',borderRadius:'4px',padding:'10px 20px',fontFamily:"'JetBrains Mono',monospace",fontSize:'12px',color:'#0ea5e9',letterSpacing:'0.15em'}}>
           ◎ {user?.grs_score || 0} GRS
         </div>

@@ -86,10 +86,27 @@ function SubmitContent() {
           points: 120
         })
         
-        // Fetch current score and update
-        const { data: profile } = await supabase.from('users').select('grs_score').eq('id', user.id).single()
+        // Fetch current profile for streak logic
+        const { data: profile } = await supabase.from('users').select('grs_score, streak, last_active').eq('id', user.id).single()
+        
+        // Streak Logic
+        const today = new Date().toISOString().split('T')[0]
+        const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+        const lastActive = profile?.last_active
+        
+        let newStreak = 1
+        if (lastActive === yesterday) {
+          newStreak = (profile?.streak || 0) + 1
+        } else if (lastActive === today) {
+          newStreak = profile?.streak || 1
+        }
+
         const newScore = (profile?.grs_score || 0) + 120
-        await supabase.from('users').update({ grs_score: newScore }).eq('id', user.id)
+        await supabase.from('users').update({ 
+          grs_score: newScore,
+          streak: newStreak,
+          last_active: today
+        }).eq('id', user.id)
       }
 
       router.push('/feed')

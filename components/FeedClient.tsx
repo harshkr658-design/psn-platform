@@ -110,9 +110,24 @@ export default function FeedClient() {
             🔥 Trending
           </span>
         )}
-        {(p.avg_score || 0) >= 4 && (p.review_count || 0) >= 3 && (
-          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-purple-500/10 text-purple-500 border border-purple-500/20">
+        {(p.avg_score || 0) >= 4 && (p.review_count || 0) >= 5 && (
+          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-purple-500/10 text-purple-500 border border-purple-500/20" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
             ✨ High Merit
+          </span>
+        )}
+        {(p.upvotes || 0) >= 10 && (
+          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            🔥 Gaining Traction
+          </span>
+        )}
+        {(p.upvotes || 0) >= 50 && (
+          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-green-500/10 text-green-500 border border-green-500/20" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            ✅ Community Verified
+          </span>
+        )}
+        {childrenMap[p.id]?.length >= 3 && (
+          <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-cyan-500/10 text-cyan-500 border border-cyan-500/20" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            ◈ Evolving
           </span>
         )}
       </div>

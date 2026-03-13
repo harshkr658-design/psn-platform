@@ -89,10 +89,27 @@ export default function ReviewPage() {
         }).eq('id', id)
       }
 
-      // 3. Update User GRS
-      const { data: profile } = await supabase.from('users').select('grs_score').eq('id', userId).single()
+      // 3. Update User GRS & Streak
+      const { data: profile } = await supabase.from('users').select('grs_score, streak, last_active').eq('id', userId).single()
+      
+      // Streak Logic
+      const today = new Date().toISOString().split('T')[0]
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]
+      const lastActive = profile?.last_active
+      
+      let newStreak = 1
+      if (lastActive === yesterday) {
+        newStreak = (profile?.streak || 0) + 1
+      } else if (lastActive === today) {
+        newStreak = profile?.streak || 1
+      }
+
       const newScore = (profile?.grs_score || 0) + 50
-      await supabase.from('users').update({ grs_score: newScore }).eq('id', userId)
+      await supabase.from('users').update({ 
+        grs_score: newScore,
+        streak: newStreak,
+        last_active: today
+      }).eq('id', userId)
       await supabase.from('grs_log').insert({ user_id: userId, action_type: 'Blind review given', points: 50 })
 
       // 4. Update MRS Accuracy (Placeholder logic: deviation from global average)
