@@ -8,37 +8,109 @@ export default function ProblemDetail() {
   const { id } = useParams()
   const [upvoted, setUpvoted] = useState(false)
 
-  // Demo Data for Problem 1
-  const problem = {
-    id: '1',
-    title: 'Social media algorithms optimizing for outrage and division',
-    description: 'Current engagement metrics ignore the long-term societal cost of polarized discourse and mental health decline. Major platforms use engagement-based ranking that amplifies emotionally charged content over factually accurate content, eroding shared reality.',
-    impact: 'Weakened democratic institutions, increased teenage depression rates, and social fragmentation. MIT study found false news spreads 6x faster than true news.',
-    evidence: 'Platform X internal reports indicate engagement increases by 34% for negative emotional triggers. Pervasive echo chambers confirmed in 2024 global digital report.',
-    proposed_solution: 'Implement an "Epistemic Merit" layer that decouples visibility from engagement and integrates it with factual verification. Mandate algorithmic transparency and offer chronological feed options.',
-    category: 'Technology',
-    upvotes: 847,
-    review_count: 12,
-    avg_score: 4.3,
-    breakdown: {
-      clarity: 4.1,
-      feasibility: 3.8,
-      evidence: 4.7,
-      innovation: 3.9,
-      realism: 4.2
+  const DEMO_PROBLEMS = [
+    {
+      id: '1',
+      title: 'Social media algorithms optimise for outrage rather than accuracy',
+      description: 'Major platforms use engagement-based ranking that amplifies emotionally charged content over factually accurate content, eroding shared reality.',
+      impact: 'Weakened democratic institutions, increased teenage depression rates, and social fragmentation. MIT study found false news spreads 6x faster than true news.',
+      evidence: 'Platform X internal reports indicate engagement increases by 34% for negative emotional triggers. Pervasive echo chambers confirmed in 2024 global digital report.',
+      proposed_solution: 'Implement an "Epistemic Merit" layer that decouples visibility from engagement and integrates it with factual verification. Mandate algorithmic transparency and offer chronological feed options.',
+      category: 'Technology',
+      upvotes: 47,
+      review_count: 12,
+      avg_score: 4.3,
+      breakdown: { clarity: 4.1, feasibility: 3.8, evidence: 4.7, innovation: 3.9, realism: 4.2 },
+      evolutions: [
+        { id: '101', title: 'Algorithmic transparency laws could force platforms to open their ranking logic', category: 'Technology', upvotes: 23 },
+        { id: '102', title: 'User-controlled feed settings as default rather than opt-in', category: 'Technology', upvotes: 18 }
+      ],
+      reviews: [
+        { author: 'Anonymous Reviewer', score: 4.6, comment: 'Extremely well-evidenced. The MIT study citation is compelling. Solution pathway needs more specificity around implementation.' },
+        { author: 'Anonymous Reviewer', score: 4.1, comment: 'Clear problem definition. Feasibility concerns around regulatory enforcement in non-democratic contexts.' },
+        { author: 'Anonymous Reviewer', score: 4.3, comment: 'Original framing of the outrage-accuracy tradeoff. Impact section could quantify harms more precisely.' }
+      ]
     },
-    evolutions: [
-      { id: '101', title: 'Algorithmic transparency laws could force platforms to open their ranking logic', category: 'Technology', upvotes: 23 },
-      { id: '102', title: 'User-controlled feed settings as default rather than opt-in', category: 'Technology', upvotes: 18 }
-    ],
-    reviews: [
-      { author: 'Anonymous Reviewer', score: 4.6, comment: 'Extremely well-evidenced. The MIT study citation is compelling. Solution pathway needs more specificity around implementation.' },
-      { author: 'Anonymous Reviewer', score: 4.1, comment: 'Clear problem definition. Feasibility concerns around regulatory enforcement in non-democratic contexts.' },
-      { author: 'Anonymous Reviewer', score: 4.3, comment: 'Original framing of the outrage-accuracy tradeoff. Impact section could quantify harms more precisely.' }
-    ]
-  }
+    {
+      id: '2',
+      title: 'Students memorise answers rather than developing critical thinking',
+      description: 'Education systems globally optimise for standardised test scores, rewarding memorisation over reasoning, questioning, and creation.',
+      impact: 'Reduced adaptability in a changing job market, decline in civic engagement, and stagnation of creative industries.',
+      evidence: 'PISA 2022 data shows students significantly underperform in open-ended reasoning vs recall tasks globally.',
+      proposed_solution: 'Replace percentage-based grading with competency portfolios. Introduce Socratic method as a foundational requirement.',
+      category: 'Education',
+      upvotes: 38,
+      review_count: 9,
+      avg_score: 4.1,
+      breakdown: { clarity: 4.3, feasibility: 3.5, evidence: 4.5, innovation: 4.0, realism: 3.7 },
+      evolutions: [],
+      reviews: []
+    },
+    {
+      id: '3',
+      title: 'Urban air pollution disproportionately affects low-income communities',
+      description: 'Industrial facilities and highways are systematically located near low-income areas, exposing those with least political power to highest environmental health risks.',
+      impact: 'Systemic health inequalities, higher rates of childhood asthma, and reduced life expectancy in marginalized districts.',
+      evidence: 'EPA data shows communities of colour are 1.5x more likely to live near industrial polluters. WHO: 7 million premature deaths annually.',
+      proposed_solution: 'Mandate environmental impact assessments that include demographic analysis. Zoning reform for industrial distancing.',
+      category: 'Environment',
+      upvotes: 29,
+      review_count: 7,
+      avg_score: 4.6,
+      breakdown: { clarity: 4.5, feasibility: 3.9, evidence: 4.8, innovation: 4.2, realism: 4.6 },
+      evolutions: [],
+      reviews: []
+    },
+    {
+      id: '4',
+      title: 'Mental health support is inaccessible to most people who need it',
+      description: 'The global mental health system is severely under-resourced, leaving the majority without access to professional support due to cost, availability, and stigma.',
+      impact: 'Lost economic productivity ($1 trillion annually), increased suicide rates, and social isolation.',
+      evidence: 'WHO: 75% of people with mental disorders in low-income countries receive no treatment. US therapy costs $150-300.',
+      proposed_solution: 'Train peer support specialists at community level. Integrate into primary healthcare systems via digital first-response.',
+      category: 'Health',
+      upvotes: 61,
+      review_count: 18,
+      avg_score: 4.7,
+      breakdown: { clarity: 4.6, feasibility: 4.2, evidence: 4.9, innovation: 4.5, realism: 4.7 },
+      evolutions: [],
+      reviews: []
+    },
+    {
+      id: '5',
+      title: 'Gig economy workers have no safety net or career progression path',
+      description: 'Platform-based gig work has created workers who lack healthcare, pension, sick pay, and career development — trapped in permanent economic precarity.',
+      impact: 'Increasing social welfare burden, erosion of the middle class, and lack of long-term financial security for millions.',
+      evidence: 'UK ONS: 4.4 million gig workers. Most earn below minimum wage after expenses. Zero access to employer pension contributions.',
+      proposed_solution: 'Introduce portable benefits — contributions that follow the worker regardless of the platform they use.',
+      category: 'Economy',
+      upvotes: 22,
+      review_count: 6,
+      avg_score: 3.9,
+      breakdown: { clarity: 4.0, feasibility: 3.2, evidence: 4.1, innovation: 4.3, realism: 3.4 },
+      evolutions: [],
+      reviews: []
+    },
+    {
+      id: '6',
+      title: 'Smartphone addiction is rewiring adolescent brain development',
+      description: 'Excessive smartphone use during critical developmental years is correlated with increased anxiety, reduced attention span, and disrupted sleep patterns in teenagers.',
+      impact: 'Generation-wide attention deficit, increased rates of clinical anxiety and depression among Gen Z and Gen Alpha.',
+      evidence: 'Journal of Child Psychology 2023: teens averaging 7+ hours screen time show 40% higher anxiety markers.',
+      proposed_solution: 'Implement device-level cognitive limits for developmental ages. Foster "Phone-Free" educational environments.',
+      category: 'Social',
+      upvotes: 55,
+      review_count: 14,
+      avg_score: 4.2,
+      breakdown: { clarity: 4.4, feasibility: 3.8, evidence: 4.6, innovation: 3.9, realism: 4.0 },
+      evolutions: [],
+      reviews: []
+    }
+  ]
 
-  if (id !== '1' && id !== '2' && id !== '3' && id !== '4' && id !== '5' && id !== '6' ) {
+  const problem = DEMO_PROBLEMS.find(p => p.id === id)
+
+  if (!problem) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
         <h1 className="text-4xl font-bold mb-4" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>MISSION NOT FOUND</h1>
