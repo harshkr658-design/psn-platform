@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import Link from 'next/link'
 
 export default function Leaderboard() {
   const [leaders, setLeaders] = useState<any[]>([])
@@ -62,7 +63,11 @@ export default function Leaderboard() {
                   color: currentUser?.id === l.id ? '#0ea5e9' : '#fff'
                 }}>
                   <td style={{padding:'20px',fontFamily:"'Bebas Neue',sans-serif",fontSize:'24px'}}>{i + 1}</td>
-                  <td style={{padding:'20px',fontWeight:600}}>{l.display_name || 'ANONYMOUS'}</td>
+                  <td style={{padding:'20px',fontWeight:600}}>
+                    <Link href={`/profile/${l.display_name.toLowerCase().replace(' ', '-')}`} style={{ color: 'inherit', textDecoration: 'none' }} className="hover:text-[#0ea5e9] transition-colors">
+                      {l.display_name || 'ANONYMOUS'}
+                    </Link>
+                  </td>
                   <td style={{padding:'20px',fontFamily:"'JetBrains Mono',monospace",color:'#0ea5e9'}}>+{l.weeklyGrs}</td>
                   <td style={{padding:'20px'}}>{l.streak || 0} 🔥</td>
                   <td style={{padding:'20px'}}>

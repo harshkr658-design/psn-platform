@@ -218,7 +218,9 @@ export default function FeedClient() {
         )}
       </div>
 
-      <h2 className="text-xl font-bold mb-3 leading-tight group-hover:text-[#0ea5e9] transition-colors">{p.title}</h2>
+      <Link href={`/problem/${p.id}`} className="no-underline group">
+        <h2 className="text-xl font-bold mb-3 leading-tight group-hover:text-[#0ea5e9] transition-colors">{p.title}</h2>
+      </Link>
       <p className="text-slate-400 text-sm mb-4 line-clamp-2 leading-relaxed">{p.description}</p>
       
       {p.source_url && (

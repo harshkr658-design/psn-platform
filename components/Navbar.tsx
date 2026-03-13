@@ -103,6 +103,7 @@ export default function Navbar() {
             {[
               { label: 'FEED', href: '/feed' },
               { label: 'SUBMIT', href: '/submit' },
+              { label: 'MAP', href: '/map' },
               { label: 'LEADERBOARD', href: '/leaderboard' },
               { label: 'DASHBOARD', href: '/dashboard' }
             ].map((link) => (
@@ -210,12 +211,12 @@ export default function Navbar() {
         {[
           { label: 'FEED', href: '/feed', icon: '◎' },
           { label: 'SUBMIT', href: '/submit', icon: '⊕' },
-          { label: 'REVIEW', href: '/review/1', icon: '◈' },
+          { label: 'MAP', href: '/map', icon: '◈' },
           { label: 'PROFILE', href: '/dashboard', icon: '👤' }
         ].map((item) => (
           <Link key={item.label} href={item.href} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:'4px',textDecoration:'none',padding:'8px 0'}}>
-            <span style={{fontSize:'18px', color: (pathname === item.href || (item.label === 'REVIEW' && pathname?.startsWith('/review'))) ? '#0ea5e9' : '#fff'}}>{item.icon}</span>
-            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:'9px',color: (pathname === item.href || (item.label === 'REVIEW' && pathname?.startsWith('/review'))) ? '#0ea5e9' : '#64748b',letterSpacing:'0.1em'}}>{item.label}</span>
+            <span style={{fontSize:'18px', color: (pathname === item.href || (item.label === 'MAP' && pathname === '/map')) ? '#0ea5e9' : '#fff'}}>{item.icon}</span>
+            <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:'9px',color: (pathname === item.href || (item.label === 'MAP' && pathname === '/map')) ? '#0ea5e9' : '#64748b',letterSpacing:'0.1em'}}>{item.label}</span>
           </Link>
         ))}
       </nav>

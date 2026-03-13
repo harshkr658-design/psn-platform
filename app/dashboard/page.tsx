@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 
 export default function Dashboard() {
@@ -78,9 +79,11 @@ export default function Dashboard() {
       <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'48px',flexWrap:'wrap',gap:'16px'}}>
         <div>
           <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#334155',letterSpacing:'0.2em',marginBottom:'4px'}}>OPERATOR COMMAND CENTER</div>
-          <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'48px',letterSpacing:'0.05em',margin:0,background:'linear-gradient(135deg,#fff,#94a3b8)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}}>
-            {user?.display_name || 'ANONYMOUS'}
-          </h1>
+            <Link href="/profile/iron-falcon" style={{ textDecoration: 'none' }}>
+              <h1 style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:'48px',letterSpacing:'0.05em',margin:0,background:'linear-gradient(135deg,#fff,#94a3b8)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent'}} className="hover:opacity-80 transition-opacity">
+                {user?.display_name || 'ANONYMOUS'}
+              </h1>
+            </Link>
         </div>
         <div style={{textAlign:'right'}}>
           <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:'10px',color:'#334155',letterSpacing:'0.1em'}}>
